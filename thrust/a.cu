@@ -88,10 +88,12 @@ void Example_2(){
 	cout << "Execution time: " << time / CLOCKS_PER_SEC << " seconds." << endl;
 }
 
+
 typedef thrust::host_vector<int>::iterator				itrInt_2;
-typedef thrust::host_vector<thrust::host_vector<int>>::iterator		itrVector;
+typedef thrust::host_vector< thrust::host_vector<int> >::iterator		itrVector;
 typedef thrust::tuple<itrInt_2, itrVector>				itrTuple_2;
 typedef thrust::zip_iterator<itrTuple_2> 				itrNLC_2;		// Use for NLC implementation
+/*
 void Example_3(){
 
 	int i;
@@ -103,7 +105,7 @@ void Example_3(){
 	thrust::host_vector<int> ID(pair_size);
 	ID[0] = 0; ID[1] = 1; ID[2] = 2; ID[3] = 3; ID[4] = 4;
 
-	thrust::host_vector<thrust::host_vector<int>> neighbors(pair_size);
+	thrust::host_vector< thrust::host_vector<int> > neighbors(pair_size);
 
 	thrust::host_vector<int> vec1(nSize);
 	thrust::host_vector<int> vec2(nSize);
@@ -142,13 +144,173 @@ void Example_3(){
 	time = clock() - time;
 	cout << "Execution time: " << time / CLOCKS_PER_SEC << " seconds." << endl;
 }
+*/
+/*
+typedef thrust::host_vector<int>::iterator				itrInt_2;
+typedef thrust::host_vector< thrust::host_vector<int> >::iterator		itrVector;
+typedef thrust::tuple<itrInt_2, itrVector>				itrTuple_2;
+typedef thrust::zip_iterator<itrTuple_2> 				itrNLC_2;		// Use for NLC implementation
+*/
+
+typedef thrust::device_vector< int >::iterator				d_itrInt;
+typedef thrust::device_vector< std::list<int> >::iterator		d_itrList;
+typedef thrust::tuple< d_itrInt, d_itrList >				d_itrTuple;
+typedef thrust::zip_iterator< d_itrTuple > 				d_itrNLC;		// Use for NLC implementation
+
+void Example_4(){
+
+	int i, j, randVal;
+	int modulus = 10;
+	int molecule_count = 1000;//2000000; // 2 M
+	//int nSize = 5;		// max num of neighbors
+//	clock_t time;	
+//	time = clock();
+		
+	// Create host vector and fill with random data
+	thrust::host_vector< int > ID(molecule_count);	
+
+
+	std::list< std::list< int > > neighbors(molecule_count);
+	
+	// Fill 	
+	for(i = 0; i < neighbors.size(); i++){
+	
+		std::list< int > nums;
+		//randVal = 1 + ( rand() % modulus );
+	
+		//for(j = 0; j < randVal; j++)
+		for(j = 0; j < 5; j++)
+			nums.push_back( i * j );	
+		neighbors.push_back( nums );
+	}
+	
+	cout << "size: " << sizeof(neighbors) / sizeof(int) << endl;
+
+//	thrust::device_vector< int > d_vec( neighbors.size() );
+//	thrust::copy( neighbors.begin(), neighbors.end(), d_vec.begin() );
+
+
+
+
+//	thrust::device_vector<int> d_vec( neighbors.begin(), neighbors.end() );
+
+
+
+
+
+//	thrust::generate(ID.begin(), ID.end(), rand);
+
+	// Transfer to device
+//	thrust::device_vector<int> d_vec = ID;
+	
+	
+
+
+	
+
+
+
+/*
+
+
+
+
+	thrust::host_vector< thrust::host_vector<int> > neighbors(pair_size);
+
+	thrust::host_vector<int> vec1(nSize);
+	thrust::host_vector<int> vec2(nSize);
+	thrust::host_vector<int> vec3(nSize);
+	thrust::host_vector<int> vec4(nSize);
+	thrust::host_vector<int> vec5(nSize);
+
+	for(i = 0; i < pair_size; i++){
+		vec1[i] = i;
+		vec2[i] = i;
+		vec3[i] = i;
+		vec4[i] = i;
+		vec5[i] = i;
+	}
+
+	neighbors[0] = vec1;
+	neighbors[1] = vec2;
+	neighbors[2] = vec3;
+	neighbors[3] = vec4;
+	neighbors[4] = vec5;
+	
+	itrNLC_2 first = thrust::make_zip_iterator( thrust::make_tuple(ID.begin(), neighbors.begin() ) );
+	itrNLC_2 last  = thrust::make_zip_iterator( thrust::make_tuple(ID.end()  , neighbors.end()   ) );
+
+	// for each touple
+	for(i = 0; i < pair_size; i++){	
+
+		// print first element of touple
+		cout <<  "ID: " << thrust::get<0>(first[i]) << "\tValues: ";
+
+		// print second element of touple ( host_vector -> iterate through )		
+		for(int j = 0; j < thrust::get<1>( first[i] ).size(); j++)
+		 	cout << '\t' << thrust::get<1>( first[i] )[j];	
+		cout << endl;
+	}
+//	time = clock() - time;
+//	cout << "Execution time: " << time / CLOCKS_PER_SEC << " seconds." << endl;
+// */
+}
+
+
 
 int main(){
-	Example_1();
-	Example_2();
-	Example_3();
+	//Example_1();
+	//Example_2();
+	//Example_3();
+	Example_4();
 	return 1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
