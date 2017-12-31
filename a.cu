@@ -5,7 +5,11 @@
 
 #define BLOCKS 16
 #define THREADS 512
-#define LIMIT 20000000000
+
+unsigned long long int BILLION     = 1000000000;
+unsigned long long int TRILLION    = 1000000000000;
+unsigned long long int QUADRILLION = 1000000000000000;
+unsigned long long int LIMIT       = 10000 * QUADRILLION;
 
 // Used to pass a CPU function as a param to the GPU
 __global__ void kernel( void (*func) (void) ) {	func();	}
@@ -33,7 +37,7 @@ inline void Example_1(bool CPU, bool GPU){
 #############################################################################*/
 void AlgoCPU();
 __global__ 
-void AlgoGPU();
+void AlgoGPU(unsigned long long int DEV_LIMIT);
 void Run_AlgoCPU();
 void Run_AlgoGPU();
 
@@ -111,7 +115,7 @@ void Run_AlgoGPU(){
 	clock_t time = clock();
 	std::cout << "Beginning AlgoGPU() with LIMIT = " << LIMIT << " ..." << std::endl;
 
-	AlgoGPU<<< BLOCKS, THREADS >>>();
+	AlgoGPU<<< BLOCKS, THREADS >>>(LIMIT);
 	
 	time = clock() - time;
 	std::cout << "AlgoGPU() runtime:\t" << time / (double) CLOCKS_PER_SEC << std::endl;
@@ -134,17 +138,16 @@ void AlgoCPU(){
 }
 
 // Run an algorithm on the GPU (results do not matter; this is for time)
-__global__ void AlgoGPU(){
+__global__ void AlgoGPU(unsigned long long int DEV_LIMIT){
 
 	// This will overflow but that's not important
-	long int sum = 0;
+	unsigned long long int sum = 0;
 	
-	for(int i = 0; i < LIMIT; i++){
+	for(unsigned long long int i = 0; i < DEV_LIMIT; i++){
 		sum += (i * i) + 2 * (i * i * i) + i;
 		for(int j = 0; j < 300; j++){
 		
 		}
-		//std::cout << sum << std::endl;	
 	}
  }
 // END Example 2
